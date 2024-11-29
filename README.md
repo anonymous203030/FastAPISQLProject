@@ -1,8 +1,15 @@
 # FASTAPI SQL BASIC APPLICATION
 
-## Step 1: Create Python environment and install dependencies (if no Python, install from
+## Step 0: Git clone repository to your local env and get into dir
 
-https://www.python.org/downloads/ concerning to your specific OS)
+```
+git clone https://github.com/anonymous203030/FastAPISQLProject.git
+cd FastAPISQLProject
+```
+
+## Step 1: Create Python environment and install dependencies
+
+### WARNING: if no Python, install from https://www.python.org/downloads/ concerning to your specific OS
 
 ### Linux
 
