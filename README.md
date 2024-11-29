@@ -9,15 +9,16 @@ cd FastAPISQLProject
 
 ## Step 1: Create Python environment and install dependencies
 
-### WARNING: if no Python, install from https://www.python.org/downloads/ concerning to your specific OS
+> [!WARNING]
+> if no Python, install from [Download Python](https://www.python.org/downloads/) concerning to your specific OS
 
-### Linux
+### **Linux**
 
 ```
 python3 create_venv.py
 ```
 
-### Windows
+### **Windows**
 
 ```
 python create_venv.py
