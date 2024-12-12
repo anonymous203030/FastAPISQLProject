@@ -10,7 +10,7 @@ cd FastAPISQLProject
 ## Step 1: Create Python environment and install dependencies
 
 > [!WARNING]
-> if no Python, install from [Download Python](https://www.python.org/downloads/) concerning to your specific OS
+> _if no Python, install from [Download Python](https://www.python.org/downloads/) concerning to your specific OS_
 
 ### **Linux**
 
@@ -30,4 +30,19 @@ python create_venv.py
 
 ```
 fastapi dev main/main.py --port 8080
+```
+
+> [!NOTE]
+> Ctrl+C to quit
+
+## Step 3: Create PostgreSQL local database
+
+> [!WARNING]
+> _If u haven't installed PostgreSQL visit [Download PostgreSQL](https://www.postgresql.org/download/) link and install_
+> _for your system_
+
+### Run script to make init_db.sql file initialize DB.
+
+```
+psql postgres -U postgres -h localhost -f init_db.sql
 ```
