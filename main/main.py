@@ -1,13 +1,16 @@
 import asyncio
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException
 from sqlalchemy import select
+from passlib.context import CryptContext
 
 from main.database import SessionDep
 from main.models import BookModel, setup_database, UserModel
 from main.schemas import UserSchema, BookSchema, BookAddSchema, UserRegisterSchema
 
-app = FastAPI()
+app = FastAPI(docs_url='/')
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @app.get("/books", tags=['Книги'],
@@ -57,14 +60,58 @@ async def get_user_by_id(user_id: int):
     pass
 
 
-@app.post("/login")
-async def login(credentials: UserSchema, session: SessionDep):
-    query = select(UserModel)
-
-
 @app.post("/register")
 async def register(data: UserRegisterSchema, session: SessionDep):
-    pass
+    query = select(UserModel).where(UserModel.email == data.email)
+    result = await session.execute(query)
+    existing_user = result.scalar_one_or_none()
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User with this email already exists.")
+
+    hashed_password = pwd_context.hash(data.password)
+
+    new_user = UserModel(
+        email=data.email,
+        password=hashed_password,
+        name=data.name,
+        surname=data.surname
+    )
+    session.add(new_user)
+    await session.commit()
+
+    return {"success": True, "message": "The User has been registered."}
+
+
+@app.post("/login")
+async def login(credentials: UserSchema, session: SessionDep):
+    query = select(UserModel).where(UserModel.email == credentials.email)
+    result = await session.execute(query)
+    user = result.scalar_one_or_none()
+
+    if not user or not pwd_context.verify(credentials.password, user.password):
+        raise HTTPException(status_code=401, detail="Неверный email или пароль")
+
+    return {"success": True, "message": "Авторизация успешна"}
+
+
+@app.get("/profile", summary="Get User Profile with email")
+async def get_profile(email: str, session: SessionDep):
+    query = select(UserModel).where(UserModel.email == email)
+    result = await session.execute(query)
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="User doesn't exist")
+
+    return {
+        "email": user.email,
+        "name": user.name,
+        "surname": user.surname,
+        "bio": user.bio,
+        "age": user.age,
+        "gender": user.gender
+    }
 
 
 async def main():
