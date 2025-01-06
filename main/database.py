@@ -2,7 +2,6 @@ from typing import AsyncGenerator, Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 # Create books.db sqlite DB file
 engine = create_async_engine("sqlite+aiosqlite:///books.db")
