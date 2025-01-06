@@ -84,6 +84,7 @@ def add_user(user: UserSchema):
 def get_users():
     pass
 
+
 @app.get("/users/{user_id}", tags=["Пользователи", "Пользователь"])
 def get_user_by_id(user_id: int):
     pass
