@@ -19,7 +19,11 @@ class UserDetailsSchema(UserSchema):
     model_config = ConfigDict(extra='forbid')
 
 
-class NewBook(BaseModel):
+class BookAddSchema(BaseModel):
     title: str
     author: str
+
+
+class BookSchema(BookAddSchema):
+    id: int
 
