@@ -23,8 +23,8 @@ class UserRegisterSchema(UserSchema):
 
 
 class BookAddSchema(BaseModel):
-    title: str
-    author: str
+    title: str = Field(min_length=2, max_length=100)
+    author: str = Field(min_length=2, max_length=100)
 
 
 class BookSchema(BookAddSchema):
