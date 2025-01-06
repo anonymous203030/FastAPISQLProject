@@ -26,23 +26,22 @@ python create_venv.py
 
 ## Step 2: Test run
 
-### This command will run your fastapi server on port 8080
+```
+uvicorn main.main:app --reload
+```
 
-```
-fastapi dev main/main.py --port 8080
-```
+### This command will run local uvicorn web server in your computer
 
 > [!NOTE]
 > Ctrl+C to quit
 
-## Step 3: Create PostgreSQL local database
-
-> [!WARNING]
-> _If u haven't installed PostgreSQL visit [Download PostgreSQL](https://www.postgresql.org/download/) link and install_
-> _for your system_
+## Step 3: Create SQLite local database
 
 ### Run script to make init_db.sql file initialize DB.
 
 ```
-psql postgres -U postgres -h localhost -f init_db.sql
+python3 -m main.main
 ```
+
+< [!NOTE]
+> This command will create sqlite3 database file called books.db and the models created in models.py
