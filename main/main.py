@@ -32,3 +32,7 @@ def get_book(book_id: int):
     raise HTTPException(status_code=404, detail="Book not found")
 
 
+@app.get("/", summary="Главная ручка", tags=["Основные Ручки"])
+def root():
+    return "Hello World"
+
