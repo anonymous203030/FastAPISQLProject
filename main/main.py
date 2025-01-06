@@ -13,8 +13,8 @@ app = FastAPI(docs_url='/')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-@app.get("/books", tags=['Книги'],
-         summary='Получить Все Книги'
+@app.get("/books", tags=['Books'],
+         summary='Get all Books'
          )
 async def get_books(session: SessionDep, skip: int = 0, limit: int = 10):
     query = select(BookModel).offset(skip).limit(limit)
@@ -26,8 +26,8 @@ async def get_books(session: SessionDep, skip: int = 0, limit: int = 10):
     return {"books": books, "skip": skip, "limit": limit}
 
 
-@app.get("/books/{book_id}", tags=["Книги", "Книга"],
-         summary='Получить Конретную Книгу'
+@app.get("/books/{book_id}", tags=["Books", "Book"],
+         summary='Get Specific Book By ID'
          )
 async def get_book(book_id: int, session: SessionDep):
     query = select(BookModel).where(BookModel.id == book_id)
@@ -38,7 +38,7 @@ async def get_book(book_id: int, session: SessionDep):
     return book
 
 
-@app.post("/books")
+@app.post("/books", tags=["Books", "Book"], summary="Add New Book")
 async def add_book(data: BookAddSchema, session: SessionDep):
     new_book = BookModel(
         title=data.title,
@@ -49,7 +49,7 @@ async def add_book(data: BookAddSchema, session: SessionDep):
     return {'success': True, "message": "Книга Успешно Добавлена"}
 
 
-@app.get("/users", tags=["Пользователи"])
+@app.get("/users", tags=["Users"], summary="Get All Users")
 async def get_users(session: SessionDep, skip: int = 0, limit: int = 10):
     query = select(UserModel).offset(skip).limit(limit)
     result = await session.execute(query)
@@ -61,7 +61,7 @@ async def get_users(session: SessionDep, skip: int = 0, limit: int = 10):
     return {"users": users, "skip": skip, "limit": limit}
 
 
-@app.get("/users/{user_id}", tags=["Пользователи", "Пользователь"])
+@app.get("/users/{user_id}", tags=["Users", "User"], summary="Get Specific User By ID")
 async def get_user_by_id(user_id: int, session: SessionDep):
     query = select(UserModel).where(UserModel.id == user_id)
     result = await session.execute(query)
@@ -72,7 +72,7 @@ async def get_user_by_id(user_id: int, session: SessionDep):
     return user
 
 
-@app.post("/register")
+@app.post("/register", tags=["Authentication", "Users", "User"])
 async def register(data: UserRegisterSchema, session: SessionDep):
     query = select(UserModel).where(UserModel.email == data.email)
     result = await session.execute(query)
@@ -95,7 +95,7 @@ async def register(data: UserRegisterSchema, session: SessionDep):
     return {"success": True, "message": "The User has been registered."}
 
 
-@app.post("/login")
+@app.post("/login", tags=["Users", "User", "Authentication"], summary="Login to User")
 async def login(credentials: UserSchema, session: SessionDep):
     query = select(UserModel).where(UserModel.email == credentials.email)
     result = await session.execute(query)
@@ -107,7 +107,7 @@ async def login(credentials: UserSchema, session: SessionDep):
     return {"success": True, "message": "Авторизация успешна"}
 
 
-@app.get("/profile", summary="Get User Profile with email")
+@app.get("/profile", summary="Get User Profile with email", tags=["Users", "User", "Profile"])
 async def get_profile(email: str, session: SessionDep, offset: int = 0, limit: int = 10):
     query = select(UserModel).offset(offset).limit(limit).where(UserModel.email == email)
     result = await session.execute(query)
