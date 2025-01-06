@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
-from typing import List, Annotated
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from typing import List, Annotated, Literal
 
 app = FastAPI()
 
@@ -50,3 +50,19 @@ def create_book(new_book: NewBook):
     })
 
     return {'success': True, "message": "Книга Успешно Добавлена"}
+
+
+class UserSchema(BaseModel):
+    email: EmailStr
+    password: str = Field(max_length=120)
+    model_config = ConfigDict(extra='forbid')
+
+
+class UserDetailsSchema(UserSchema):
+    name: str = Field(min_length=2, max_length=100)
+    surname: str = Field(min_length=2, max_length=100)
+    bio: str | None = Field(max_length=300)
+    age: int | None = Field(ge=0, le=130)
+    gender: str = Literal['male', 'female']
+
+    model_config = ConfigDict(extra='forbid')
