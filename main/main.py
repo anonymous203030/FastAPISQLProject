@@ -4,8 +4,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy import select
 
 from main.database import SessionDep
-from main.models import BookModel, setup_database
-from main.schemas import UserSchema, BookSchema, BookAddSchema
+from main.models import BookModel, setup_database, UserModel
+from main.schemas import UserSchema, BookSchema, BookAddSchema, UserRegisterSchema
 
 app = FastAPI()
 
@@ -43,17 +43,27 @@ async def add_book(data: BookAddSchema, session: SessionDep):
 
 
 @app.post("/users", tags=["Пользователи", "Пользователь"])
-def add_user(user: UserSchema):
+async def add_user(user: UserSchema):
     pass
 
 
 @app.get("/users", tags=["Пользователи"])
-def get_users() -> list[UserSchema]:
+async def get_users() -> list[UserSchema]:
     pass
 
 
 @app.get("/users/{user_id}", tags=["Пользователи", "Пользователь"])
-def get_user_by_id(user_id: int):
+async def get_user_by_id(user_id: int):
+    pass
+
+
+@app.post("/login")
+async def login(credentials: UserSchema, session: SessionDep):
+    query = select(UserModel)
+
+
+@app.post("/register")
+async def register(data: UserRegisterSchema, session: SessionDep):
     pass
 
 
