@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 
 from main.database import SessionDep
 from main.models import BookModel, setup_database, UserModel
-from main.schemas import UserSchema, BookSchema, BookAddSchema, UserRegisterSchema
+from main.schemas import UserSchema, BookAddSchema, UserRegisterSchema
 
 app = FastAPI(docs_url='/')
 
@@ -67,7 +67,7 @@ async def get_user_by_id(user_id: int, session: SessionDep):
     result = await session.execute(query)
     user = result.scalar_one_or_none()
 
-    if not user:
+    if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
