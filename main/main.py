@@ -16,10 +16,14 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 @app.get("/books", tags=['Книги'],
          summary='Получить Все Книги'
          )
-async def get_books(session: SessionDep):
-    query = select(BookModel)
+async def get_books(session: SessionDep, skip: int = 0, limit: int = 10):
+    query = select(BookModel).offset(skip).limit(limit)
     result = await session.execute(query)
-    return result.scalars().all()
+    books = result.scalars().all()
+
+    if not books:
+        raise HTTPException(status_code=404, detail="Книги не найдены")
+    return {"books": books, "skip": skip, "limit": limit}
 
 
 @app.get("/books/{book_id}", tags=["Книги", "Книга"],
@@ -45,19 +49,27 @@ async def add_book(data: BookAddSchema, session: SessionDep):
     return {'success': True, "message": "Книга Успешно Добавлена"}
 
 
-@app.post("/users", tags=["Пользователи", "Пользователь"])
-async def add_user(user: UserSchema):
-    pass
-
-
 @app.get("/users", tags=["Пользователи"])
-async def get_users() -> list[UserSchema]:
-    pass
+async def get_users(session: SessionDep, skip: int = 0, limit: int = 10):
+    query = select(UserModel).offset(skip).limit(limit)
+    result = await session.execute(query)
+    users = result.scalars().all()
+
+    if not users:
+        raise HTTPException(status_code=404, detail="Книги не найдены")
+
+    return {"users": users, "skip": skip, "limit": limit}
 
 
 @app.get("/users/{user_id}", tags=["Пользователи", "Пользователь"])
-async def get_user_by_id(user_id: int):
-    pass
+async def get_user_by_id(user_id: int, session: SessionDep):
+    query = select(UserModel).where(UserModel.id == user_id)
+    result = await session.execute(query)
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 
 @app.post("/register")
@@ -96,8 +108,8 @@ async def login(credentials: UserSchema, session: SessionDep):
 
 
 @app.get("/profile", summary="Get User Profile with email")
-async def get_profile(email: str, session: SessionDep):
-    query = select(UserModel).where(UserModel.email == email)
+async def get_profile(email: str, session: SessionDep, offset: int = 0, limit: int = 10):
+    query = select(UserModel).offset(offset).limit(limit).where(UserModel.email == email)
     result = await session.execute(query)
     user = result.scalar_one_or_none()
 
