@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, EmailStr
 
@@ -6,17 +6,20 @@ from pydantic import BaseModel, ConfigDict, Field, EmailStr
 class UserSchema(BaseModel):
     email: EmailStr
     password: str = Field(max_length=120)
-    model_config = ConfigDict(extra='forbid')
+
+    class Config:
+        extra = 'forbid'
 
 
-class UserDetailsSchema(UserSchema):
-    name: str = Field(min_length=2, max_length=100)
-    surname: str = Field(min_length=2, max_length=100)
-    bio: str | None = Field(max_length=300)
-    age: int | None = Field(ge=0, le=130)
-    gender: str = Literal['male', 'female']
+class UserRegisterSchema(UserSchema):
+    name: Optional[str] = Field(min_length=2, max_length=100)
+    surname: Optional[str] = Field(min_length=2, max_length=100)
+    bio: Optional[str] = Field(max_length=300)
+    age: Optional[int] = Field(ge=0, le=130)
+    gender: Optional[Literal['male', 'female']] = None
 
-    model_config = ConfigDict(extra='forbid')
+    class Config:
+        extra = 'forbid'
 
 
 class BookAddSchema(BaseModel):
@@ -26,4 +29,3 @@ class BookAddSchema(BaseModel):
 
 class BookSchema(BookAddSchema):
     id: int
-
