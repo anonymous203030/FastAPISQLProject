@@ -1,7 +1,8 @@
-import uvicorn
 from fastapi import FastAPI, HTTPException, Depends
 
-from main.schemas import UserSchema, NewBook
+from main.database import SessionDep
+from main.models import BookModel
+from main.schemas import UserSchema, BookSchema, BookAddSchema
 
 app = FastAPI()
 
@@ -37,12 +38,11 @@ def get_book(book_id: int):
 
 
 @app.post("/books")
-def create_book(new_book: NewBook):
-    books.append({
-        "id": len(books) + 1,
-        "title": new_book.title,
-        "author": new_book.author
-    })
+def add_book(data: BookAddSchema, session: SessionDep):
+    new_book = BookModel(
+        title=data.title,
+        author=data.author
+    )
 
     return {'success': True, "message": "Книга Успешно Добавлена"}
 
