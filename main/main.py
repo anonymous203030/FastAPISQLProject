@@ -52,6 +52,13 @@ def create_book(new_book: NewBook):
     return {'success': True, "message": "Книга Успешно Добавлена"}
 
 
+# data = {
+#     "email": "abc@mail.ru",
+#     "bio": None,
+#     "age": 12,
+# }
+
+
 class UserSchema(BaseModel):
     email: EmailStr
     password: str = Field(max_length=120)
@@ -66,3 +73,17 @@ class UserDetailsSchema(UserSchema):
     gender: str = Literal['male', 'female']
 
     model_config = ConfigDict(extra='forbid')
+
+
+@app.post("/users", tags=["Пользователи", "Пользователь"])
+def add_user(user: UserSchema):
+    pass
+
+
+@app.get("/users", tags=["Пользователи"])
+def get_users():
+    pass
+
+@app.get("/users/{user_id}", tags=["Пользователи", "Пользователь"])
+def get_user_by_id(user_id: int):
+    pass
