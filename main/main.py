@@ -36,7 +36,17 @@ def get_book(book_id: int):
     raise HTTPException(status_code=404, detail="Book not found")
 
 
+class NewBook(BaseModel):
+    title: str
+    author: str
 
-@app.get("/", summary="Главная ручка", tags=["Основные Ручки"])
-def root():
-    return "Hello World"
+
+@app.post("/books")
+def create_book(new_book: NewBook):
+    books.append({
+        "id": len(books) + 1,
+        "title": new_book.title,
+        "author": new_book.author
+    })
+
+    return {'success': True, "message": "Книга Успешно Добавлена"}
