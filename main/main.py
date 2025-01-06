@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException, Depends
 
-from main.schemas import UserSchema
+from main.schemas import UserSchema, NewBook
 
 app = FastAPI()
 
