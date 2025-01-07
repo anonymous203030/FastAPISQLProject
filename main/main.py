@@ -1,7 +1,7 @@
 import asyncio
 
 from fastapi import FastAPI, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, func
 from passlib.context import CryptContext
 
 from main.database import SessionDep
@@ -47,6 +47,38 @@ async def add_book(data: BookAddSchema, session: SessionDep):
     session.add(new_book)
     await session.commit()
     return {'success': True, "message": "Книга Успешно Добавлена"}
+
+
+@app.put("/update_book/{book_id}", tags=["Books", "Book"], summary="Update Book with specifications")
+async def update_book(book_id: int, title: str, author: str, session: SessionDep):
+    query = (
+        select(BookModel)
+        .where(BookModel.id == book_id, BookModel.author == author)
+    )
+    book = await session.execute(query)
+    book = book.scalars().first()
+
+    if book:
+        book.title = title
+        await session.commit()
+        return {"message": "Book updated successfully"}
+    else:
+        return {"message": "Book not found or author does not match"}
+
+
+@app.get("/books_count_by_author", tags=["Books"], summary="Books amount by authors")
+async def get_books_count_by_author(session: SessionDep):
+    # Group books by author and count them
+    query = select(BookModel.author, func.count(BookModel.id)).group_by(BookModel.author)
+    result = await session.execute(query)
+
+    authors_books_count = []
+    for author, count in result.all():
+        authors_books_count.append({
+            "author": author,
+            "books_count": count
+        })
+    return authors_books_count
 
 
 @app.get("/users", tags=["Users"], summary="Get All Users")
